@@ -5,6 +5,26 @@ const app = () => {
     const play = document.querySelector(".play");
     const timeDisplay = document.querySelector(".time-display");
     let meditationDuration = 180; //Set an initial duration
+    setTimeDisplay(meditationDuration);
+
+    function setTimeDisplay(timeToDisplay){
+        let seconds = Math.floor(timeToDisplay % 60);
+        let minutes = Math.floor(timeToDisplay / 60);
+        timeDisplay.textContent = seconds==0 ? `${minutes}:00` : seconds>=10 ? `${minutes}:${seconds}` : `${minutes}:0${seconds}`;
+    }
+
+    //Create a function to stop and play the sounds
+    function checkPlayingSong(song){
+        if(song.paused) {
+            song.play();
+            video.play();
+            play.src = "./svg/pause.svg";
+        } else {
+            song.pause();
+            video.pause();
+            play.src = "./svg/play.svg";
+        };
+    };
 
     //Retrieve all the Sounds in the application
     const sounds = document.querySelectorAll(".sound-picker button");
@@ -25,7 +45,7 @@ const app = () => {
     timeSelect.forEach(option => {
         option.addEventListener("click", function (){
             meditationDuration=this.getAttribute("data-time");
-            timeDisplay.textContent=`${Math.floor(meditationDuration / 60)}:${Math.floor(meditationDuration % 60)}`;
+            setTimeDisplay(meditationDuration);
         });
     });
 
@@ -41,32 +61,16 @@ const app = () => {
         checkPlayingSong(song);
     });
 
-    //Create a function to stop and play the sounds
-    const checkPlayingSong = function(song) {
-        if(song.paused) {
-            song.play();
-            video.play();
-            play.src = "./svg/pause.svg";
-        } else {
-            song.pause();
-            video.pause();
-            play.src = "./svg/play.svg";
-        };
-    };
-
     //Animate the circle. The 'ontimeupdate' event occurs when the playing position of an audio/video has changed
     song.ontimeupdate = () => {
         let currentTime = song.currentTime;
-        let elapsed = meditationDuration - currentTime;
-        let seconds = Math.floor(elapsed % 60);
-        let minutes = Math.floor(elapsed / 60);
 
         // Animate the circle 
         let progress = outlineLength - (currentTime / meditationDuration) * outlineLength;
         outline.style.strokeDashoffset = progress; 
         
-        //animate the text
-        timeDisplay.textContent = seconds>=10 ? `${minutes}:${seconds}` : `${minutes}:0${seconds}`;
+        let elapsedTime = meditationDuration - currentTime;
+        setTimeDisplay(elapsedTime);
 
         //prevent the time from going beyond 0 and into the negative
         if(currentTime >= meditationDuration) {
