@@ -4,7 +4,7 @@ const app = () => {
     const song = document.querySelector(".song");
     const play = document.querySelector(".play");
     const timeDisplay = document.querySelector(".time-display");
-    let meditationDuration = 180; //Set an initial duration
+    let meditationDuration = 120; //Set an initial duration
     setTimeDisplay(meditationDuration);
 
     function setTimeDisplay(timeToDisplay){
@@ -38,14 +38,26 @@ const app = () => {
         }); 
     });
  
-    //Retrieve all the Time options in the application
+    //Retrieve all the Time buttons in the application
     const timeSelect = document.querySelectorAll(".time-select button");
+    let selectedTimeButton = timeSelect[0];
+    setButtonProperties(selectedTimeButton);
  
+    function setButtonProperties(timeSelectButton){
+        selectedTimeButton.style.color = 'white';
+        selectedTimeButton.style.background = 'none';
+        selectedTimeButton = timeSelectButton;
+
+        timeSelectButton.style.color = 'black';
+        timeSelectButton.style.background = 'white';
+    }
+
     //Define what happens when a time button is clicked
-    timeSelect.forEach(option => {
-        option.addEventListener("click", function (){
+    timeSelect.forEach(timeSelectButton => {
+        timeSelectButton.addEventListener("click", function (){
             meditationDuration=this.getAttribute("data-time");
             setTimeDisplay(meditationDuration);
+            setButtonProperties(timeSelectButton);
         });
     });
 
